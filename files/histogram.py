@@ -25,12 +25,7 @@ def statistics_compute(data):
             stats[column]['scores'][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
             stats[column]['stats'][house]['mean'] = utils.stats_mean(stats[column]['scores'][house])
 
-    for column, values in stats.items():
-        if stats[column]['stats']['variation'] < result:
-            result = stats[column]['stats']['variation']
-            course = column
-
-    print(f"The course with the most homogeneous score distribution between all four houses is {course} with a variation of {result:.2f}%")
+        stats[column]['stats']['F'], stats[column]['stats']['p'] = utils.stats_anova(stats[column]['scores'])
 
     return stats
 
