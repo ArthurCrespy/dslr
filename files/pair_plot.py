@@ -1,4 +1,5 @@
 import sys
+import math
 import utils
 import itertools
 import matplotlib.pyplot as plt
@@ -57,7 +58,6 @@ def statistics_display(stats):
     for ax in axs[plt_size:]:
         ax.remove()
 
-    fig.suptitle("Pair plot of scores for each course in all four houses")
     fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.995, 0.030))
 
     plt.tight_layout()
