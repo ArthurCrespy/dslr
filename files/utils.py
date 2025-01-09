@@ -1,6 +1,9 @@
 import sys
 import csv
+import math
 import matplotlib.pyplot
+
+## CSV Utils ##
 
 def csv_parse(file_path):
     try:
@@ -45,6 +48,8 @@ def csv_parse_pair(file_path):
     return data
 
 
+## Color Utils ##
+
 def color_cmap(n, color_map='Set3'):
     return matplotlib.pyplot.cm.get_cmap(color_map, n)
 
@@ -59,50 +64,100 @@ def color_house():
     return colors
 
 
-def maths_sum(values):
+## Maths Utils ##
+
+
+def maths_beta(a, b):
+    log_beta = math.lgamma(a) + math.lgamma(b) - math.lgamma(a + b)
+
+    return math.exp(log_beta)
+
+
+def maths_beta_incomplete(x, a, b):
+    total = 0.0
+    n_steps = 10000
+    step = x / n_steps
+
+    for i in range(n_steps):
+        t = i * step
+        total += (t ** (a - 1)) * ((1 - t) ** (b - 1)) * step
+
+    return total
+
+
+def maths_anova_distri(F, d1, d2):
+    if F <= 0:
+        return 1
+
+    x = (d1 * F) / (d1 * F + d2)
+
+    a = d1 / 2
+    b = d2 / 2
+
+    B = maths_beta(a, b)
+    I = maths_beta_incomplete(x, a, b) / B
+
+    return 1 - I
+
+
+## Stats Utils ##
+
+def stats_mean(values):
     if not values:
         return None
 
-    result = 0
-    for i in range(len(values)):
-        result += float(values[i])
+    return sum(values) / len(values)
+
+def stats_anova_interpret(F, p):
+    if p < 0.05 and F >= 100:
+        return f"Very high variance (F: {F:.3f})"
+    elif p >= 0.5 and F < 0.5:
+        return f"Very low variance (F: {F:.3f})"
+
+
+    if p < 0.05:
+        result = f"Very homogenous (p: {p:.3f})"
+    elif p < 0.09:
+        result = f"Homogenous (p: {p:.3f})"
+    elif p < 0.25:
+        result = f"Almost homogeneous (p: {p:.3f})"
+    elif p < 0.3:
+        result = f"Borderline (p: {p:.3f})"
+    else:
+        result = f"Uneven (p: {p:.3f})"
+
+    if F < 0.5:
+        result += f" with very low variance (F: {F:.3f})"
+    elif F < 1:
+        result += f" with low variance (F: {F:.3f})"
+    elif F < 10:
+        result += f" with acceptable variance (F: {F:.3f})"
+    elif F < 100:
+        result += f" with high variance (F: {F:.3f})"
+    else:
+        result += f" with very high variance (F: {F:.3f})"
 
     return result
 
-
-def maths_mean(values):
+def stats_anova(values):
     if not values:
         return None
 
-    return maths_sum(values) / len(values)
+    N = sum(len(group) for group in values.values())
+    k = len(values)
 
+    mean_global = sum(sum(group) for group in values.values()) / N
 
-def maths_max(values):
-    if not values:
-        return None
+    ssbw = sum(len(group) * ((sum(group) / len(group)) - mean_global) ** 2 for group in values.values())
+    sswt = sum(sum((x - (sum(group) / len(group))) ** 2 for x in group) for group in values.values())
 
-    result = float(values[0])
-    for i in range(len(values)):
-        if float(values[i]) > result:
-            result = float(values[i])
+    dfbw = k - 1
+    dfwt = N - k
 
-    return result
+    msbw = ssbw / dfbw
+    mswt = sswt / dfwt
 
+    F = msbw / mswt
+    p = maths_anova_distri(F, dfbw, dfwt)
 
-def maths_min(values):
-    if not values:
-        return None
-
-    result = float(values[0])
-    for i in range(len(values)):
-        if float(values[i]) < result:
-            result = float(values[i])
-
-    return result
-
-def maths_abs(value):
-    return value if value >= 0 else -value
-
-
-def maths_sqrt(value):
-    return value ** 0.5
+    return F, p

@@ -1,4 +1,5 @@
 import sys
+import math
 import utils
 import matplotlib.pyplot as plt
 
@@ -22,10 +23,10 @@ def statistics_compute(data):
             stats[column]['scores'][house] = {}
             stats[column]['stats'][house] = {}
             stats[column]['scores'][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
-            stats[column]['stats'][house]['mean'] = utils.maths_mean(stats[column]['scores'][house])
 
         result = utils.maths_abs((utils.maths_max([stats[column]['stats'][house]['mean'] for house in stats[column]['stats']]) - utils.maths_min([stats[column]['stats'][house]['mean'] for house in stats[column]['stats']])) / utils.maths_min([stats[column]['stats'][house]['mean'] for house in stats[column]['stats']]) * 100)
         stats[column]['stats']['variation'] = result
+            stats[column]['stats'][house]['mean'] = utils.stats_mean(stats[column]['scores'][house])
 
     for column, values in stats.items():
         if stats[column]['stats']['variation'] < result:
@@ -41,7 +42,7 @@ def statistics_display(stats):
     plt_combinations = list(stats.items())
     plt_size = len(plt_combinations)
 
-    fig, axs = plt.subplots(int(utils.maths_sqrt(plt_size) + 1) , int(utils.maths_sqrt(plt_size) + 1), figsize=(25, 25))
+    fig, axs = plt.subplots(int(math.sqrt(plt_size) + 1) , int(math.sqrt(plt_size) + 1), figsize=(25, 25))
     axs = axs.flatten()
 
     color = utils.color_house()

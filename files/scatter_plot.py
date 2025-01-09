@@ -1,4 +1,5 @@
 import sys
+import math
 import utils
 import itertools
 import matplotlib.pyplot as plt
@@ -36,7 +37,7 @@ def statistics_display(stats):
     plt_combinations = list(itertools.combinations(stats.keys(), 2))
     plt_size = len(plt_combinations)
 
-    fig, axs = plt.subplots(int(utils.maths_sqrt(plt_size) + 1) , int(utils.maths_sqrt(plt_size) + 1), figsize=(50, 50))
+    fig, axs = plt.subplots(int(math.sqrt(plt_size) + 1) , int(math.sqrt(plt_size) + 1), figsize=(50, 50))
     axs = axs.flatten()
 
     color = utils.color_house()

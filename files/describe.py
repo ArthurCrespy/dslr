@@ -18,15 +18,15 @@ def statistics_compute(data):
         n = len(values)
         stats[column]['Count'] = n
 
-        mean = utils.maths_sum(values) / n
+        mean = sum(values) / n
         stats[column]['Mean'] = mean
 
-        variance = utils.maths_sum([((x - mean) ** 2) for x in values]) / n
+        variance = sum([((x - mean) ** 2) for x in values]) / n
         std_dev = variance ** 0.5
         stats[column]['Std'] = std_dev
 
-        val_min = utils.maths_min(values)
-        val_max = utils.maths_max(values)
+        val_min = min(values)
+        val_max = max(values)
         stats[column]['Min'] = val_min
         stats[column]['Max'] = val_max
 
@@ -46,10 +46,10 @@ def statistics_display(stats):
     features = [feature.ljust(10) if len(feature) < 10 else (feature[:9] + '.') for feature in list(stats.keys())]
     print("".join(["Statistic".ljust(width_column)] + [i.ljust(width_column) for i in features]))
 
-    for stat in ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max"]:
-        row = [stat.ljust(width_column)]
+    for i in ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max"]:
+        row = [i.ljust(width_column)]
         for feature in list(stats.keys()):
-            value = f"{stats[feature].get(stat):.6f}"
+            value = f"{stats[feature][i]:.6f}"
             row.append(value.ljust(width_column))
         print("".join(row))
 

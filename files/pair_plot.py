@@ -36,7 +36,7 @@ def statistics_display(stats):
     plt_combinations = list(itertools.product(list(stats.keys()), list(stats.keys())))
     plt_size = len(plt_combinations)
 
-    fig, axs = plt.subplots(int(utils.maths_sqrt(plt_size)) , int(utils.maths_sqrt(plt_size)), figsize=(50, 50))
+    fig, axs = plt.subplots(int(math.sqrt(plt_size)) , int(math.sqrt(plt_size)), figsize=(50, 50))
     axs = axs.flatten()
 
     color = utils.color_house()
