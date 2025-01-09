@@ -23,9 +23,6 @@ def statistics_compute(data):
             stats[column]['scores'][house] = {}
             stats[column]['stats'][house] = {}
             stats[column]['scores'][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
-
-        result = utils.maths_abs((utils.maths_max([stats[column]['stats'][house]['mean'] for house in stats[column]['stats']]) - utils.maths_min([stats[column]['stats'][house]['mean'] for house in stats[column]['stats']])) / utils.maths_min([stats[column]['stats'][house]['mean'] for house in stats[column]['stats']]) * 100)
-        stats[column]['stats']['variation'] = result
             stats[column]['stats'][house]['mean'] = utils.stats_mean(stats[column]['scores'][house])
 
     for column, values in stats.items():
@@ -55,14 +52,14 @@ def statistics_display(stats):
             ax.set_title(f"Histogram of scores by Hogwarts house for {x}")
             ax.set_xlabel("Score")
             ax.set_ylabel("Number of students")
-            ax.text(0.03, 0.95, f"Variation b/w houses : {stats[x]['stats']['variation']:.2f}%", fontsize=10, bbox=dict(facecolor='white', edgecolor='black'), transform=ax.transAxes)
+            ax.text(0.03, 0.95, utils.stats_anova_interpret(stats[x]['stats']['F'], stats[x]['stats']['p']), fontsize=10, bbox=dict(facecolor='white', edgecolor='black'), transform=ax.transAxes)
             ax.grid(axis='x', linestyle='-', alpha=0.3)
             ax.grid(axis='y', linestyle='-', alpha=0.3)
 
     for ax in axs[plt_size:]:
         ax.remove()
 
-    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.31, 0.07))
+    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.285, 0.07))
 
     plt.tight_layout()
     plt.show()
