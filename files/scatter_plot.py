@@ -56,7 +56,7 @@ def statistics_display(stats):
     for ax in axs[plt_size:]:
         ax.remove()
 
-    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.995, 0.030))
+    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.693, 0.035))
 
     plt.tight_layout()
     plt.show()
