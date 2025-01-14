@@ -6,29 +6,30 @@ import matplotlib.pyplot as plt
 
 def statistics_compute(data):
     stats = {}
-
     remove = set()
-    for column, values in data.items():
+
+    for key, values in data.items():
         for i, v in enumerate(values):
             if v is None:
                 remove.add(i)
 
-    for column in data.keys():
-        data[column] = [v for i, v in enumerate(data[column]) if i not in remove]
+    for key in data.keys():
+        data[key] = [v for i, v in enumerate(data[key]) if i not in remove]
 
-    for column, values in data.items():
+    for key, values in data.items():
         try:
             values = [float(v) for v in values]
         except ValueError:
             continue
 
-        if not values or column == "Index":
+        if not values or key == "Index":
             continue
 
-        stats[column] = {}
+        stats[key] = {}
+        stats[key]['scores'] = {}
 
         for house in set(data['Hogwarts House']):
-            stats[column][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
+            stats[key]['scores'][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
 
     return stats
 
@@ -45,20 +46,20 @@ def statistics_display(stats):
     for i, (x, y) in enumerate(plt_combinations):
         ax = axs[i]
 
-        for j, house in enumerate(stats[x].keys()):
+        for j, house in enumerate(stats[x]['scores'].keys()):
             if x == y:
-                ax.hist(stats[x][house], bins=50, color=color[house], alpha=0.5)
+                ax.hist(stats[x]['scores'][house], bins=50, color=color[house], alpha=0.5)
                 ax.grid(axis='x', linestyle='-', alpha=0.3)
                 ax.grid(axis='y', linestyle='-', alpha=0.3)
             else:
-                ax.scatter(stats[x][house], stats[y][house], color=color[house], alpha=0.5)
+                ax.scatter(stats[x]['scores'][house], stats[y]['scores'][house], color=color[house], alpha=0.5)
                 ax.grid(axis='x', linestyle='-', alpha=0.3)
                 ax.grid(axis='y', linestyle='-', alpha=0.3)
 
     for ax in axs[plt_size:]:
         ax.remove()
 
-    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.995, 0.030))
+    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.995, 0.032))
 
     plt.tight_layout()
     plt.show()

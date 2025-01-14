@@ -6,26 +6,27 @@ import matplotlib.pyplot as plt
 def statistics_compute(data):
     stats = {}
 
-    for column, values in data.items():
+    for key, values in data.items():
         try:
             values = [float(v) for v in values]
         except ValueError:
             continue
 
-        if not values or column == "Index":
+        if not values or key == "Index":
             continue
 
-        stats[column] = {}
-        stats[column]['scores'] = {}
-        stats[column]['stats'] = {}
+        stats[key] = {}
+
+        stats[key]['stats'] = {}
+        stats[key]['scores'] = {}
 
         for house in set(data['Hogwarts House']):
-            stats[column]['scores'][house] = {}
-            stats[column]['stats'][house] = {}
-            stats[column]['scores'][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
-            stats[column]['stats'][house]['mean'] = utils.stats_mean(stats[column]['scores'][house])
+            stats[key]['scores'][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
 
-        stats[column]['stats']['F'], stats[column]['stats']['p'] = utils.stats_anova(stats[column]['scores'])
+            stats[key]['stats'][house] = {}
+            stats[key]['stats'][house]['mean'] = utils.stats_mean(stats[key]['scores'][house])
+
+        stats[key]['stats']['F'], stats[key]['stats']['p'] = utils.stats_anova(stats[key]['scores'])
 
     return stats
 

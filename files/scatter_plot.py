@@ -8,33 +8,34 @@ def statistics_compute(data):
     stats = {}
 
     remove = set()
-    for column, values in data.items():
+    for key, values in data.items():
         for i, v in enumerate(values):
             if v is None:
                 remove.add(i)
 
-    for column in data.keys():
-        data[column] = [v for i, v in enumerate(data[column]) if i not in remove]
+    for key in data.keys():
+        data[key] = [v for i, v in enumerate(data[key]) if i not in remove]
 
-    for column, values in data.items():
+    for key, values in data.items():
         try:
             values = [float(v) for v in values]
         except ValueError:
             continue
 
-        if not values or column == "Index":
+        if not values or key == "Index":
             continue
 
-        stats[column] = {}
+        stats[key] = {}
+        stats[key]['scores'] = {}
 
         for house in set(data['Hogwarts House']):
-            stats[column][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
+            stats[key]['scores'][house] = [v for v, h in zip(values, data['Hogwarts House']) if h == house]
 
     return stats
 
 
 def statistics_display(stats):
-    plt_combinations = list(itertools.combinations(stats.keys(), 2))
+    plt_combinations = list(itertools.combinations(list(stats.keys()), 2))
     plt_size = len(plt_combinations)
 
     fig, axs = plt.subplots(int(math.sqrt(plt_size) + 1) , int(math.sqrt(plt_size) + 1), figsize=(50, 50))
@@ -45,8 +46,8 @@ def statistics_display(stats):
     for i, (x, y) in enumerate(plt_combinations):
         ax = axs[i]
 
-        for j, house in enumerate(stats[x].keys()):
-            ax.scatter(stats[x][house], stats[y][house], color=color[house], alpha=0.7)
+        for j, house in enumerate(stats[x]['scores'].keys()):
+            ax.scatter(stats[x]['scores'][house], stats[y]['scores'][house], color=color[house], alpha=0.7)
             ax.set_title(f"Scatter plot of scores in {x} vs {y}")
             ax.set_xlabel(f"Scores in {x}")
             ax.set_ylabel(f"Scores in {y}")
