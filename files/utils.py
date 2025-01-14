@@ -1,3 +1,4 @@
+import os
 import sys
 import csv
 import math
@@ -36,17 +37,28 @@ def csv_parse_pair(file_path):
                         data[key].append(None)
                     elif value.strip():
                         data[key].append(value.strip())
-
-            for column, row in data.items():
-                if len(row) != len(data['Index']):
-                    print(f"Error: Missing value in column {column}")
-                    sys.exit(1)
     except Exception as e:
         print(f"Error: {e}")
         sys.exit(1)
 
     return data
 
+
+## Theta Utils ##
+
+def thetas_create(thetas, features, file_path=".theta.csv"):
+    try:
+        with open(file_path, 'w') as f:
+            f.write(",".join(features) + ',Bias' + "\n")
+            for theta in thetas:
+                f.write(",".join(map(str, theta)) + "\n")
+    except Exception as e:
+        print(f"An error occurred while creating file '{file_path}'\n\t -> {e}")
+        return None, None
+
+
+def thetas_initialize(n):
+    return [0.0] * n
 
 ## Color Utils ##
 
@@ -65,6 +77,13 @@ def color_house():
 
 
 ## Maths Utils ##
+
+def maths_sigmoid(z):
+    return 1 / (1 + math.exp(-z))
+
+
+def maths_matrix_multiply(vector, weights):
+    return sum(v * w for v, w in zip(vector, weights))
 
 
 def maths_beta(a, b):
@@ -108,12 +127,34 @@ def stats_mean(values):
 
     return sum(values) / len(values)
 
+
+def stats_std(values):
+    if not values:
+        return None
+
+    return math.sqrt(sum([((v - stats_mean(values)) ** 2) for v in values]) / len(values))
+
+
+def stats_standardize(values):
+    if not values:
+        return None, None, None
+
+    result = []
+
+    mean = stats_mean(values)
+    std = math.sqrt(sum([((v - mean) ** 2) for v in values]) / len(values))
+
+    for v in values:
+        result.append((v - mean) / std)
+
+    return result
+
+
 def stats_anova_interpret(F, p):
     if p < 0.05 and F >= 100:
         return f"Very high variance (F: {F:.3f})"
     elif p >= 0.5 and F < 0.5:
         return f"Very low variance (F: {F:.3f})"
-
 
     if p < 0.05:
         result = f"Very homogenous (p: {p:.3f})"
@@ -138,6 +179,7 @@ def stats_anova_interpret(F, p):
         result += f" with very high variance (F: {F:.3f})"
 
     return result
+
 
 def stats_anova(values):
     if not values:
