@@ -69,10 +69,7 @@ def main():
     weights = utils.weights_read()
     stats, x, y = statistics_compute(data, weights)
     result = logreg_predict(stats, weights, x, y)
-
-    print("Index,Hogwarts House")
-    for i, prediction in enumerate(result):
-        print(f"{i},{prediction}")
+    utils.results_create(result)
 
 
 if __name__ == "__main__":

@@ -81,6 +81,19 @@ def weights_initialize(n):
     return [0.0] * n
 
 
+## Result Utils ##
+
+def results_create(result, file_path="houses.csv"):
+    try:
+        with open(file_path, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(["Index", "Hogwarts House"])
+            for i, prediction in enumerate(result):
+                writer.writerow([i, prediction])
+    except Exception as e:
+        print(f"An error occurred while creating file '{file_path}'\n\t -> {e}")
+
+
 ## Color Utils ##
 
 def color_cmap(n, color_map='Set3'):
