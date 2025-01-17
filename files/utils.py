@@ -44,21 +44,42 @@ def csv_parse_pair(file_path):
     return data
 
 
-## Theta Utils ##
+## Weights Utils ##
 
-def thetas_create(thetas, features, file_path=".theta.csv"):
+def weights_create(stats, houses, weights, file_path=".weights.csv"):
     try:
         with open(file_path, 'w') as f:
-            f.write(",".join(features) + ',Bias' + "\n")
-            for theta in thetas:
-                f.write(",".join(map(str, theta)) + "\n")
+            row = ["Houses/Features", *stats.keys(), "Bias"]
+            f.write(",".join(row) + "\n")
+            for i, h in enumerate(houses):
+                f.write(f"{h},{','.join(map(str, weights[i]))}\n")
+
+            mean = ["mean"] + [str(stats[key]['mean']) for key in stats.keys()] + ["0"]
+            f.write(",".join(mean) + "\n")
+            std = ["std"] + [str(stats[key]['std']) for key in stats.keys()] + ["0"]
+            f.write(",".join(std) + "\n")
     except Exception as e:
         print(f"An error occurred while creating file '{file_path}'\n\t -> {e}")
-        return None, None
 
 
-def thetas_initialize(n):
+def weights_read(file_path=".weights.csv"):
+    try:
+        with open(file_path, 'r') as f:
+            reader = csv.reader(f)
+            next(reader)
+            weights = {}
+            for row in reader:
+                house_name = row[0]
+                weights[house_name] = list(map(float, row[1:]))
+            return weights
+    except Exception as e:
+        print(f"An error occurred while reading file '{file_path}'\n\t -> {e}")
+        return None
+
+
+def weights_initialize(n):
     return [0.0] * n
+
 
 ## Color Utils ##
 
@@ -79,11 +100,15 @@ def color_house():
 ## Maths Utils ##
 
 def maths_sigmoid(z):
-    return 1 / (1 + math.exp(-z))
+    if z >= 0:
+        return 1 / (1 + math.exp(-z))
+    else:
+        exp_z = math.exp(z)
+        return exp_z / (1 + exp_z)
 
 
-def maths_matrix_multiply(vector, weights):
-    return sum(v * w for v, w in zip(vector, weights))
+def maths_dot_product(v1, v2):
+    return sum(a * b for a, b in zip(v1, v2))
 
 
 def maths_beta(a, b):
