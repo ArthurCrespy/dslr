@@ -2,7 +2,13 @@ import sys
 import math
 import utils
 import itertools
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+def matplotlib_configure():
+    mpl.use('TkAgg')
+    plt.rcParams['figure.dpi'] = 20
+
 
 def statistics_compute(data):
     stats = {}
@@ -46,6 +52,12 @@ def statistics_display(stats):
     for i, (x, y) in enumerate(plt_combinations):
         ax = axs[i]
 
+        if i >= (len(plt_combinations) - len(stats.keys())):
+            ax.set_xlabel(y)
+
+        if i % len(stats.keys()) == 0:
+            ax.set_ylabel(x)
+
         for j, house in enumerate(stats[x]['scores'].keys()):
             if x == y:
                 ax.hist(stats[x]['scores'][house], bins=50, color=color[house], alpha=0.5)
@@ -59,7 +71,7 @@ def statistics_display(stats):
     for ax in axs[plt_size:]:
         ax.remove()
 
-    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.995, 0.032))
+    fig.legend(list(color.keys()) , title="Hogwarts Houses", bbox_to_anchor=(0.995, 0.035))
 
     plt.tight_layout()
     plt.show()
@@ -70,10 +82,13 @@ def main():
         print("Usage: histogram.py <dataset.csv>")
         sys.exit(1)
 
-    data = utils.csv_parse_pair(sys.argv[1])
-    stats = statistics_compute(data)
-
-    statistics_display(stats)
+    try:
+        matplotlib_configure()
+        data = utils.csv_parse_pair(sys.argv[1])
+        stats = statistics_compute(data)
+        statistics_display(stats)
+    except Exception as e:
+        print(f"An error occurred while running the program \n\t -> {e.__class__.__name__}: {e}")
 
 
 if __name__ == "__main__":

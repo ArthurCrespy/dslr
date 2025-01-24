@@ -113,7 +113,7 @@ def logreg_train(stats, houses, x, y, algo, learning_rate=0.001, iteration_max=1
 
 
             if abs(log_loss_prev - log_loss) < tolerance or iteration == iteration_max - 1:
-                print(f"Model for house {house_name} trained after {iteration + 1} iterations. (log loss: {log_loss})")
+                print(f"Model for house {house_name} trained after {iteration + 1} iterations. (last loss: {log_loss})")
                 break
 
             log_loss_prev = log_loss
@@ -141,10 +141,13 @@ def main():
             print("Invalid algorithm. Use -n (normal), -s (stochastic), or -b (batch).")
             sys.exit(1)
 
-    data = utils.csv_parse_pair(dataset)
-    stats, houses, x, y = statistics_compute(data)
-    weights = logreg_train(stats, houses, x, y, algo)
-    utils.weights_create(stats, houses, weights)
+    try:
+        data = utils.csv_parse_pair(dataset)
+        stats, houses, x, y = statistics_compute(data)
+        weights = logreg_train(stats, houses, x, y, algo)
+        utils.weights_create(stats, houses, weights)
+    except Exception as e:
+        print(f"An error occurred while running the program \n\t -> {e.__class__.__name__}: {e}")
 
 
 if __name__ == "__main__":

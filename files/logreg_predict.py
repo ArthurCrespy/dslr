@@ -65,12 +65,14 @@ def main():
         print("Usage: logreg_predict.py <dataset.csv>")
         sys.exit(1)
 
-    data = utils.csv_parse_pair(sys.argv[1])
-    weights = utils.weights_read()
-    stats, x, y = statistics_compute(data, weights)
-    result = logreg_predict(stats, weights, x, y)
-    utils.results_create(result)
-
+    try:
+        data = utils.csv_parse_pair(sys.argv[1])
+        weights = utils.weights_read()
+        stats, x, y = statistics_compute(data, weights)
+        result = logreg_predict(stats, weights, x, y)
+        utils.results_create(result)
+    except Exception as e:
+        print(f"An error occurred while running the program \n\t -> {e.__class__.__name__}: {e}")
 
 if __name__ == "__main__":
     main()

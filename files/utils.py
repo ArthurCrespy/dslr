@@ -18,7 +18,7 @@ def csv_parse(file_path):
                     if value.strip():
                         data[key].append(value.strip())
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"An error occurred while parsing file '{file_path}'\n\t -> {e}")
         sys.exit(1)
 
     return data
@@ -38,7 +38,7 @@ def csv_parse_pair(file_path):
                     elif value.strip():
                         data[key].append(value.strip())
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"An error occurred while parsing file '{file_path}'\n\t -> {e}")
         sys.exit(1)
 
     return data

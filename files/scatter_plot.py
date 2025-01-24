@@ -2,7 +2,13 @@ import sys
 import math
 import utils
 import itertools
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+def matplotlib_configure():
+    mpl.use('TkAgg')
+    plt.rcParams['figure.dpi'] = 20
+
 
 def statistics_compute(data):
     stats = {}
@@ -68,10 +74,13 @@ def main():
         print("Usage: histogram.py <dataset.csv>")
         sys.exit(1)
 
-    data = utils.csv_parse_pair(sys.argv[1])
-    stats = statistics_compute(data)
-
-    statistics_display(stats)
+    try:
+        matplotlib_configure()
+        data = utils.csv_parse_pair(sys.argv[1])
+        stats = statistics_compute(data)
+        statistics_display(stats)
+    except Exception as e:
+        print(f"An error occurred while running the program \n\t -> {e.__class__.__name__}: {e}")
 
 
 if __name__ == "__main__":

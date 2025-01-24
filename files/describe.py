@@ -67,10 +67,12 @@ def main():
         print("Usage: describe.py <dataset.csv>")
         sys.exit(1)
 
-    data = utils.csv_parse(sys.argv[1])
-    stats = statistics_compute(data)
-
-    statistics_display(stats)
+    try:
+        data = utils.csv_parse(sys.argv[1])
+        stats = statistics_compute(data)
+        statistics_display(stats)
+    except Exception as e:
+        print(f"An error occurred while running the program \n\t -> {e.__class__.__name__}: {e}")
 
 
 if __name__ == "__main__":
